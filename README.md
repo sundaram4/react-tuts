@@ -77,7 +77,7 @@ or
 {items.length === 0 && <p>No item</p>}
 ```
 
-//Handling Events -- click events in a component
+//Handling Events -- click events in a component  
 In React each element has a property(prop) called onClick 
 ``` javascript
   <ul>
@@ -92,24 +92,24 @@ In React each element has a property(prop) called onClick
       ))}
   </ul>
 ``` javascript
-  //for logging the clicked item 
-  //we can also pass second parameter index and we 
-  //can see the index of the parameter that was clicked
-```
+//for logging the clicked item   
+//we can also pass second parameter index and we   
+//can see the index of the parameter that was clicked  
+``` javascript
   onClick = {() => console.log(item,index)}
   ()-- inside this we can occasionally have event
   onClick= {(event) => console.log(event)}
 ```
-  //the type of the event is a synthetic based event
-  //wrapper around native browser event . Each browser has its own event
+//the type of the event is a synthetic based event  
+//wrapper around native browser event . Each browser has its own event  
   
-  // Event handler --> handleClick
+// Event handler --> handleClick
 ```
   const handleClick = (event:MouseEvent) => console.log(event);
   onClick= {handleClick} // we just have to pass reference
 ```
-  //you can get a error if type annotation is not as Ts compiler does not 
-  //know the type of event 
+//you can get a error if type annotation is not as Ts compiler does not   
+//know the type of event   
 
 
 //Managing State
@@ -134,10 +134,10 @@ In React each element has a property(prop) called onClick
     ))}
   </ul>
  ``` 
-//passing Data via props --> can be used to pass data to componennts
-  using an interface we can define the shape or
-  interface of an object
-```
+passing Data via props --> can be used to pass data to componennts
+using an interface we can define the shape or
+interface of an object
+``` javascript
   // {items: [], heading:string}
   interface Props{
       items:string[];//using type annotation 
@@ -220,6 +220,7 @@ In React each element has a property(prop) called onClick
     )
   } 
 ```
+```
 //state vs props
   props -- input(arguments) passed to a component
           similar to function args 
@@ -229,9 +230,9 @@ In React each element has a property(prop) called onClick
           Similar to local variables
           Mutable
   similarity : anytime they both change , it will cause the dom to re render
-
-//passing children
 ```
+//passing children
+``` javascript
   imort {ReactNode} from "react";
 
   interface Props { // we caan give any name to : Props ---> AlertProps
@@ -254,8 +255,9 @@ In React each element has a property(prop) called onClick
     )
   }
 ```
-``` javascript
+
 //Excercise building a Button Component
+``` javascript
   interface ButtonProps{
     children:string;
     //color?: string; // meaning this property is optional
@@ -312,6 +314,7 @@ In React each element has a property(prop) called onClick
     children:string;
   }
 ```
+```
 Managing Component State
   // understanding the State Hook
     # React updates state asynchronously(meaning: not immediately).
@@ -319,4 +322,4 @@ Managing Component State
     # State is stored outside of components
       -- react keeps the state in the memory for as long as the component is active 
     # Use hooks at the top level of your component  
-
+```
