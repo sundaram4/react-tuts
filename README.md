@@ -63,7 +63,7 @@ const Component = () => {
 };
 ```
 
-//Conditional Rendering
+Conditional Rendering
 ``` javascript
 let items = ['a','b','c'];
 //cannot reassign a value to const variable
@@ -77,7 +77,7 @@ or
 {items.length === 0 && <p>No item</p>}
 ```
 
-//Handling Events  
+Handling Events  
 ``` javascript
   -- click events in a component  
   In React each element has a property(prop) called onClick
@@ -92,7 +92,7 @@ or
         </li>
       ))}
   </ul>
-``` javascript  
+```    
 ``` javascript  
   for logging the clicked item   
   we can also pass second parameter index and we   
@@ -104,7 +104,7 @@ or
   wrapper around native browser event . Each browser has its own event
 ```
   
-// Event handler --> handleClick
+Event handler
 ```
   const handleClick = (event:MouseEvent) => console.log(event);
   onClick= {handleClick} // we just have to pass reference
@@ -114,7 +114,7 @@ or
 ```
 
 
-//Managing State
+Managing State
 ``` javascript
   const arr = useState(-1);
   arr[0]// variable
@@ -179,8 +179,9 @@ passing Data via props
     )
   }
 ```
+
+passing function via props
 ``` javascript
-//passing function via props
   function App() {
     let items = ["a","b","c"];
     const handleSelectItem = (item:string) => {
@@ -225,7 +226,7 @@ passing Data via props
   } 
 ```
 ```
-//state vs props
+state vs props
   props -- input(arguments) passed to a component
           similar to function args 
           immutable(unchangeable)
@@ -233,9 +234,9 @@ passing Data via props
   state -- Data(Internal) managed by a component
           Similar to local variables
           Mutable
-  similarity : anytime they both change , it will cause the dom to re render
-```
-//passing children
+  similarity : anytime they both change , it will cause the dom to re render  
+```  
+passing children  
 ``` javascript
   imort {ReactNode} from "react";
 
@@ -260,7 +261,7 @@ passing Data via props
   }
 ```
 
-//Excercise building a Button Component
+Excercise building a Button Component
 ``` javascript
   interface ButtonProps{
     children:string;
@@ -285,7 +286,7 @@ passing Data via props
   }
 ```
 
-// Excercise showing an Alert
+Excercise showing an Alert
 ``` javascript
   imort {ReactNode} from "react";
 
@@ -318,8 +319,9 @@ passing Data via props
     children:string;
   }
 ```
-```
+
 Managing Component State
+```
   // understanding the State Hook
     # React updates state asynchronously(meaning: not immediately).
       --- for performance reason react takes all of state update and patches them at a later time
