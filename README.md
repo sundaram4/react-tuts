@@ -272,7 +272,7 @@ In React each element has a property(prop) called onClick
   }
 
 
-
+```
 // Excercise showing an Alert 
   imort {ReactNode} from "react";
 
@@ -304,7 +304,7 @@ In React each element has a property(prop) called onClick
   interface ButtonProps{
     children:string;
   }
-
+```
 
 Managing Component State
   // understanding the State Hook
