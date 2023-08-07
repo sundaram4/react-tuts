@@ -220,7 +220,6 @@ In React each element has a property(prop) called onClick
     )
   } 
 ```
-``` javascript
 //state vs props
   props -- input(arguments) passed to a component
           similar to function args 
@@ -230,9 +229,9 @@ In React each element has a property(prop) called onClick
           Similar to local variables
           Mutable
   similarity : anytime they both change , it will cause the dom to re render
-```
-```
+
 //passing children
+```
   imort {ReactNode} from "react";
 
   interface Props { // we caan give any name to : Props ---> AlertProps
@@ -279,8 +278,9 @@ In React each element has a property(prop) called onClick
     )
   }
 ```
+
+// Excercise showing an Alert
 ``` javascript
-// Excercise showing an Alert  
   imort {ReactNode} from "react";
 
   interface Props { // we caan give any name to : Props ---> AlertProps
@@ -312,7 +312,6 @@ In React each element has a property(prop) called onClick
     children:string;
   }
 ```
-```
 Managing Component State
   // understanding the State Hook
     # React updates state asynchronously(meaning: not immediately).
@@ -320,5 +319,4 @@ Managing Component State
     # State is stored outside of components
       -- react keeps the state in the memory for as long as the component is active 
     # Use hooks at the top level of your component  
-```
 
