@@ -272,8 +272,8 @@ In React each element has a property(prop) called onClick
   }
 
 
-```
 // Excercise showing an Alert 
+``` javascript
   imort {ReactNode} from "react";
 
   interface Props { // we caan give any name to : Props ---> AlertProps
