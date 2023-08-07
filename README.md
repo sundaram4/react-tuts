@@ -46,8 +46,7 @@ props can only be passed from Parent components down to Child components; and pr
 
 Rendering List  
 ``` javascript
-To import bootstrap into the main componenet
-import 'bootstrap/dist/css/bootstrap.css'
+import 'bootstrap/dist/css/bootstrap.css' //To import bootstrap into the main componenet
 
 items.map(item => <li>{item}</li>)
 
