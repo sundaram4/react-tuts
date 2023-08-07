@@ -4,7 +4,7 @@ JSX expression
 const heading = <h1>Mozilla Developer Network</h1>;
 This heading constant is known as a JSX expression. 
 React can use it to render that <h1> tag in our app.
-```
+``` javascript
 const header = (
   <header>
     <h1>Mozilla Developer Network</h1>
@@ -13,7 +13,7 @@ const header = (
 ```
 Browser can't read JSX without help. When compiled (using a tool like Babel)
 our header expression would look like this:
-```
+``` javascript
 const header = React.createElement("header",null,
   React.createElement("h1", null, "Mozilla Developer Network"),
 );
@@ -44,7 +44,7 @@ props can only be passed from Parent components down to Child components; and pr
 
 
 To import bootstrap into the main componenet
-```
+``` javascript
 import 'bootstrap/dist/css/bootstrap.css'
 //Rendering List
 items.map(item => <li>{item}</li>)
@@ -62,7 +62,7 @@ const Component = () => {
 ```
 
 //Conditional Rendering
-```
+``` javascript
 let items = ['a','b','c'];
 //cannot reassign a value to const variable
 items=[];
@@ -77,7 +77,7 @@ or
 
 //Handling Events -- click events in a component
 In React each element has a property(prop) called onClick 
-```
+``` javascript
   <ul>
     {items.map((items, index) => (
         <li 
@@ -89,7 +89,7 @@ In React each element has a property(prop) called onClick
         </li>
       ))}
   </ul>
-```
+``` javascript
   //for logging the clicked item 
   //we can also pass second parameter index and we 
   //can see the index of the parameter that was clicked
@@ -111,7 +111,7 @@ In React each element has a property(prop) called onClick
 
 
 //Managing State
-```
+``` javascript
   const arr = useState(-1);
   arr[0]// variable
   arr[1] // updater function
@@ -173,7 +173,7 @@ In React each element has a property(prop) called onClick
     )
   } 
 ```
-```
+``` javascript
 //passing function via props
   function App() {
     let items = ["a","b","c"];
@@ -218,7 +218,7 @@ In React each element has a property(prop) called onClick
     )
   } 
 ```
-```
+``` javascript
 //state vs props
   props -- input(arguments) passed to a component
           similar to function args 
@@ -253,7 +253,7 @@ In React each element has a property(prop) called onClick
     )
   }
 ```
-```
+``` javascript
 //Excercise building a Button Component
   interface ButtonProps{
     children:string;
@@ -277,7 +277,7 @@ In React each element has a property(prop) called onClick
     )
   }
 ```
-```
+``` javascript
 // Excercise showing an Alert  
   imort {ReactNode} from "react";
 
@@ -310,7 +310,7 @@ In React each element has a property(prop) called onClick
     children:string;
   }
 ```
-
+```
 Managing Component State
   // understanding the State Hook
     # React updates state asynchronously(meaning: not immediately).
@@ -318,5 +318,5 @@ Managing Component State
     # State is stored outside of components
       -- react keeps the state in the memory for as long as the component is active 
     # Use hooks at the top level of your component  
-
+```
 
