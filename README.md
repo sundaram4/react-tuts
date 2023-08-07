@@ -94,7 +94,7 @@ Handling Events
   </ul>
 ```    
 ``` javascript  
-  for logging the clicked item   
+  while logging the clicked item   
   we can also pass second parameter index and we   
   can see the index of the parameter that was clicked  
   onClick = {() => console.log(item,index)}
@@ -136,7 +136,7 @@ Managing State
     ))}
   </ul>
  ``` 
-passing Data via props 
+Passing Data via props 
 ``` javascript
   can be used to pass data to componennts
   using an interface we can define the shape or
@@ -180,7 +180,7 @@ passing Data via props
   }
 ```
 
-passing function via props
+Passing function via props
 ``` javascript
   function App() {
     let items = ["a","b","c"];
@@ -224,9 +224,9 @@ passing function via props
       </>
     )
   } 
+```  
+state vs props  
 ```
-```
-state vs props
   props -- input(arguments) passed to a component
           similar to function args 
           immutable(unchangeable)
@@ -236,7 +236,7 @@ state vs props
           Mutable
   similarity : anytime they both change , it will cause the dom to re render  
 ```  
-passing children  
+Passing Children  
 ``` javascript
   imort {ReactNode} from "react";
 
