@@ -92,8 +92,8 @@ or
         </li>
       ))}
   </ul>
-``` javascript
-``` javascript
+``` javascript  
+``` javascript  
   for logging the clicked item   
   we can also pass second parameter index and we   
   can see the index of the parameter that was clicked  
