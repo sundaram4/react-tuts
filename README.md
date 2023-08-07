@@ -42,13 +42,13 @@ The statement export default App makes our App component available to other modu
 Component props
 A prop is any data passed into a React component. 
 In React, dataflow is unidirectional:
-props can only be passed from Parent components down to Child components; and props are read-only.
+props can only be passed from Parent components down to Child components; and props are read-only.  
 
-
-To import bootstrap into the main componenet
+Rendering List  
 ``` javascript
+To import bootstrap into the main componenet
 import 'bootstrap/dist/css/bootstrap.css'
-//Rendering List
+
 items.map(item => <li>{item}</li>)
 
 const Component = () => {
