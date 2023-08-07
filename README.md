@@ -5,8 +5,8 @@ JSX expression
 const heading = <h1>Mozilla Developer Network</h1>;
 ```
 This heading constant is known as a JSX expression. 
-React can use it to render that <h1> tag in our app.
-``` javascript
+React can use it to render the h1 tag in our app.
+``` 
 const header = (
   <header>
     <h1>Mozilla Developer Network</h1>
