@@ -95,19 +95,19 @@ In React each element has a property(prop) called onClick
   //for logging the clicked item 
   //we can also pass second parameter index and we 
   //can see the index of the parameter that was clicked
-  ```
+```
   onClick = {() => console.log(item,index)}
   ()-- inside this we can occasionally have event
   onClick= {(event) => console.log(event)}
-  ```
+```
   //the type of the event is a synthetic based event
   //wrapper around native browser event . Each browser has its own event
   
   // Event handler --> handleClick
-  ```
+```
   const handleClick = (event:MouseEvent) => console.log(event);
   onClick= {handleClick} // we just have to pass reference
-  ```
+```
   //you can get a error if type annotation is not as Ts compiler does not 
   //know the type of event 
 
@@ -137,7 +137,7 @@ In React each element has a property(prop) called onClick
 //passing Data via props --> can be used to pass data to componennts
   using an interface we can define the shape or
   interface of an object
-  ```
+```
   // {items: [], heading:string}
   interface Props{
       items:string[];//using type annotation 
@@ -173,7 +173,7 @@ In React each element has a property(prop) called onClick
         </ul>
       </>
     )
-  } 
+  }
 ```
 ``` javascript
 //passing function via props
