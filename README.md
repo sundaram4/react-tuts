@@ -328,3 +328,98 @@ Managing Component State
       -- react keeps the state in the memory for as long as the component is active 
     # Use hooks at the top level of your component  
 ```
+Choosing the state structure  
+```javascript
+  function app(){
+    //const [firstName , setFirstName] = useState('')
+    //const [lastName , setLastName] = useState('')
+    //rather than defining two different state variables we can go for
+    const [person, setPerson] = useState({
+      firstName:'',
+      lastName:''
+    });
+    const [person, setPerson] = useState({
+      firstName:'',
+      lastName:'',
+      contact : {
+        address: {
+          street:''
+        }
+      }
+    });
+    avoid redundant state variables ---> like fullnames which can be computed
+    group realted variables inside an object --> person
+    avoid deeply nested structure  --> go for a flat strucure 
+  }
+```
+
+Keeping Components Pure  
+``` javascript
+  /*Pure Function 
+    Given the same input, always returns the same result /
+  
+  /*React is designed around this concept:
+    props ------> Component --------> JSX 
+    same props   skip re-rendering   return same jsx*/
+  //every component should be a pure function
+  //to keep components pure keep changes out of the render phase
+  const Message = () => {
+    let count = 0;
+    count ++;
+    return <div>{count}</div>
+  }
+  export default Message
+
+  function app(){
+    return(
+      <>
+        <Message/>
+        <Message/>
+        <Message/>
+      </>
+    )
+  }  
+  o/p : 1 1 1 but 
+  //if we store count outside 
+  let count = 0;
+  const Message = () => {
+    count ++;
+    return <div>{count}</div>
+  }
+  //o/p : 2 4 6 this shows to keep change out of render phase
+  //however even if we make changes inside the render phase it is totally fine
+
+```
+
+
+Understanding the Strict Mode  
+```
+  in development mode Strict mode is enabled --> react renders each component twice
+  and this is done for various reasons and 
+  one of them is to check for impure components
+
+  now we saw the output as 2 4 6
+
+  so count value for 1 3 5 was used by strict mode to check for any 
+  potential issues so the message component was rendered 6 timmes and we 
+  got the value for the second run
+
+  Message : 1 left out   Message : 2
+  
+  Message : 3 l/o  Message : 4
+  
+  Message : 5 l/o  Message : 6
+
+  let count = 0;
+  const Message = () => {
+    console.log('Message called', count)
+    count ++;
+    return <div>{count}</div>
+  }
+
+  o/p on console 
+    Message called 0
+    Message called 1 
+
+  In product mode the strict mode is not enabled and component is rendered once
+```
