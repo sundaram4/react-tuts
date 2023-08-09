@@ -423,3 +423,180 @@ Understanding the Strict Mode
 
   In product mode the strict mode is not enabled and component is rendered once
 ```
+
+Updating Objects
+``` javascript
+  function app(){
+    const [drink, setDrink ] = useState({
+      title: "Americano",
+      price:5,
+    });
+    const handleClick = () {
+      drink.price = 6;
+      setDrink(drink);
+    }
+    return(
+      <div>
+        {drink.price}
+        <button onClick= {handleClick}>Click me </button>
+      </div>
+    )
+  }  
+  // o/p: 5 Click me ,there is no change in the value of price
+
+  //to tell react about state updates , we have to give a brand new object
+  const handleClick = () {
+    const newDrink = {
+      title: drink.title,
+      price: 6
+    }
+    setDrink(newDrink);
+  };
+  //so just like props we have to treat state object as immutable
+  
+  //what if the objects had various properties
+  const newDrink = {
+    ...drink,
+    price: 6
+  }
+  setDrink(newDrink);
+  //or 
+  setDrink({...drink, price: 6})
+
+```
+Updating Nested Objects
+``` javascript
+  const [customer, setCustomer] = useState({
+    name: "John",
+    address: {
+      city: 'San Francisco',
+      zipCode: 94111
+    }
+  });
+
+  const handleClick = () => {
+    setCustomer({...customer})
+    //spread operator in javascript is shallow
+    // ...customer is going to reference same object address in memory
+    //this not what we want while updating state in react applications
+    //we should make sure that our new state object is completly
+    //independent of existing state object. they don't share anything 
+    setCustomer({
+      ...customer, 
+      address: {...customer.address, zipcode: 94112}
+    })
+    //we call setCustomer and pass new object {}
+    //in this object first we pass all the properties of old customer object
+    //we set the address property to new object and in this first we spread 
+    //existing customer address object and then we change the zipCode
+    //Always prefer a flat structure over a deeply nested structure
+  }
+
+```
+
+Updating Arrays
+``` javascript
+  //same thing applies to an array, never mutate it 
+  // we should pass a brand new array
+  const [tags, setTags] = useState(['happy', 'cheerful']);
+
+  const handleClick = () => {
+    //add ---> tags.push(); cannot do because it will modify the original array
+    setTags([...tags, 'exciting']);
+
+    //Remove   all arrays have filter method
+    setTags([tags.filter(tag => )])
+
+    //Update
+    setTags(tags.map(tag => ==='happy'?'happiness':tag))
+  }
+
+```
+
+Updating Array of Objects
+``` javascript
+  const [bugs, setBugs] = useState([
+    {id: 1, title: 'Bug 1', fixed: false}
+    {id: 2, title: 'Bug 2', fixed: false}
+  ])
+
+  //now on click if we have to mark a bug as fixed
+  const handleClick = () => {
+    setBugs(bug.map(bug => bug.id === 1 ? {...bug, fixed:true} : bug))
+  }
+
+```
+
+Simplifying Update Logic with Immer
+``` javascript
+  // to install npm i immer
+  import produce from 'immer';
+
+  const [bugs, setBugs] = useState([
+    {id: 1, title: 'Bug 1', fixed: false}
+    {id: 2, title: 'Bug 2', fixed: false}
+  ])
+
+  const handleClick = () => {
+    setBugs(produce(draft => {
+      const bug = draft.find(bug => bug.id === 1);
+      if(bug) bug.fixed = true
+    }))
+    //by convention we have to pass an --> produce(arrow functn here)
+    //draft is a proxy object that records changes we apply to the bugs array
+    // so we are free to mutate or modify it just like a regular array and immer will 
+    // create a new object with the updated changes behind the scenes for us
+  }
+
+```  
+Sharing State between Components###
+``` javascript
+  //NavBar
+  interface Props{
+    cartItemsCount: number
+    //cartItens: string[]
+    // this could also be written but navbar only needs the count of cartItems 
+  }
+  const NavBar = ({cartItemsCount}:Props) => {
+    return(
+      <div>NavBar: {cartItemsCount} </div>
+    )
+  }
+
+  //Cart
+  interface Props {
+    cartItens: string[]
+    onClear: () => void;
+  }
+  const Cart = ({cartItems, onClear}:Props) => {
+    return(
+      <>
+        <div>Cart</div>
+        <ul>
+          {cartItems.map(item => <li key={item}>{item}</li>)}
+        </ul>
+        <button onClick={onClear}>Clear</button>
+      </>
+    )
+  }
+
+  const App = () => {
+    const [cartItems, setCartItems]= useState(['Product1', 'Product2']);
+
+    return(
+      <>
+        <NavBar cartItemsCount = {cartItems.length}/>
+        <Cart cartItems= {cartItems} onClear={() => setCartItems([])} />        
+      </>
+    )
+    // had the user wanted to remove a particular cartItems then
+    // onRemove= {(product) => then remove that product using filter method from 
+    //cartItems array}
+  } 
+
+```
+Exercise- Updating State
+``` javascript
+  
+
+```
