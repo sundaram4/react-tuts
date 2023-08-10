@@ -595,8 +595,115 @@ Sharing State between Components###
   } 
 
 ```
-Exercise- Updating State
+Exercise- Building an Expandable Text Component
 ``` javascript
-  
+  interface Props {
+    children: string;
+    maxChars?: number;
+  }
+  const ExpandableText = ({children, maxChars = 100}: Props) => {
+    const [isExpanded, setExpanded] =useState(false);
+
+    if (children.length <= maxChars) return <p>{children}</p>
+
+    const text = isExpanded ? children : children.substring(0, maxChars);
+    return <p>{text}... <button onClick={() => setExpanded(!isExpanded)}>{isExpanded ? 'less':'More'}</button></p>
+  }
+
+  function App() {
+    return (
+      <div>
+        <ExpandableText maxChars={10}>
+          Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of "de Finibus Bonorum et Malorum" (The Extremes of Good and Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of ethics, very popular during the Renaissance. The first line of Lorem Ipsum, "Lorem ipsum dolor sit amet..", comes from a line in section 1.10.32.
+          The standard chunk of Lorem Ipsum used since the 1500s is reproduced below for those interested. Sections 1.10.32 and 1.10.33 from "de Finibus Bonorum et Malorum" by Cicero are also reproduced in their exact original form, accompanied by English versions from the 1914 translation by H. Rackham.
+        </ExpandableText>
+      </div> 
+    )
+  }
 
 ```
+
+Exercise- Building an Expandable Text Component
+``` javascript
+  const [game, setGame] = useState({
+    id: 1, 
+    player:{
+      name:"John",
+    } 
+  });
+
+  const handleClick = () => {
+    setGame({...game, player: {...game.player, name:'Bob'}})
+  }
+
+  const[pizza, setPizza] = useState({
+    name:'Spicy Pepperoni',
+    toppings: ['Mushrom','Paneer']
+  })
+  //handleClick
+  setPizza({...pizza, toppings: [...pizza.toppings,'Cheese']})
+
+  const [cart, setCart] = useState([
+    discount: .1,
+    items: [
+      {id: 1, title: 'Product 1', quantity: 1},
+      {id: 2, title: 'Product 2', quantity: 1}
+    ]
+  ]);
+  //handleClick
+  setPizza({...cart, items: cart.items.map(item => item.id === 1 ? {...item, quantity: 2} : item)}); //item.quantity + 1
+
+```
+
+Building a Form and Submitting it
+```javascript
+  //Form.tsx
+
+  import {FormEvent, useRef} from 'react';
+
+  const Form = () => {
+    //useRef --> to reference a dom element like input field and read its value 
+    //when form is submitted
+    //using the ref hook we can reference any kind of element -- not necessarily a input field 
+    // we can reference a button, heading, list and so on 
+    const nameRef = useRef<HTMLInputElement>(null);
+    const ageRef = useRef<HTMLInputElement>(null);
+    //why the default value is null
+    // initially when we create a ref object we do not have access to dom node
+    // because the dom is created after react renders our component
+    // so we have no value to provide here
+    // when react renders the component, it will set the value to the current dom node
+    // and when the node is removed from screen it will again reset the value to null our initial value
+    // the value is either null or reference an existing dom node
+    const person = {name: '', age: 0};
+
+    const handleSubmit = (event:FormEvent) => {
+      event.preventDefault();
+      if(nameRef.current !== null)
+        person.name = nameRef.current.value;
+      if(ageRef.current !== null)
+        person.age = ageRef.current.value;
+    }
+
+    return(
+      <form onSubmit={(event) => {
+      }}>
+        <div className="mb-3">
+          <label htmlFor= "name" className="form-label">Name</label>
+          <input ref={nameRef} id="name" type="text" className= "form-control" />
+        </div> 
+        <div className="mb-3">
+          <label htmlFor= "age" className="form-label">Age</label>
+          <input ref={ageRef} id="age" type="number" className= "form-control" />
+        </div>  
+        <button className="btn btn-primary" type="submit">Submit</button>
+      </form>
+    )
+  }
+
+  function App() {
+    return ()
+  }
+
+```
+  
