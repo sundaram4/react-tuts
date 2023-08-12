@@ -707,3 +707,455 @@ Building a Form and Submitting it
 
 ```
   
+Controlled Components
+```javascript
+  //there is another way to get values of an input field in a form using state hook
+  const Form = () => {
+    const [person, setPerson] = useState({
+      name: '',
+      age: 0
+    });
+
+    const handleSubmit = (event: FormEvent) => {
+      event.preventDefault();
+    }
+
+    // all input fields have a change event that is triggred evertime a user types a keystroke
+    // we can handle this event everytime the user types something in the input field
+    // to get the current value of the input field 
+    // onChange = {(event) => event.target.value}
+    <div className="mb-3">
+      <label htmlFor= "name" className="form-label">Name</label>
+      <input 
+        onChange={(event) => 
+          setPerson({...person, name: event.target.value})
+        }
+        value={person.name}// the input field always relies on the value in our state variable 
+        id="name" 
+        type="text" 
+        className= "form-control" 
+      />
+    </div>
+    <div className="mb-3">
+      <label htmlFor= "age" className="form-label">Age</label>
+      <input 
+        onChange={(event) => 
+          setPerson({...person, age: parseInt(event.target.value)})
+        } 
+        value={person.age}
+        id="age" 
+        type="number" 
+        className= "form-control" 
+      />
+    </div> 
+    //with this approach evertime the user types or removes a character, the state changes  
+    // the component has to re render
+    //if you are dealing with complex form with lot of elements and it is a large page and performance issues
+    // use the Ref hook but for the most cases state hook is fine  
+
+    // always have a single source of truth
+    value={person.name}// the input field always relies on the value in our state variable 
+    //so we have a single source for storing the name of the person
+    //it has become a controlled component because its state is entirely controlled by React
+    //meaning the value of input field is not managed by dom but instead stored and updated in the
+    // component state 
+  }
+
+```
+
+Managing Forms with React Hook Form
+```javascript
+  // as the form grows it becomes difficult to manage state , for every input field we have 
+  // to write Onchange and value field 
+  // to simplify we can go for React Hook Form --> quickly build forms with less code
+  // npm i rect-hook-form
+  import {useForm, FieldValues} from "react-hook-form";
+  
+  const {register}  = useForm();
+  console.log(register('name')); 
+  //name:"name" --> we just set
+  //onBlur: async (event) => {..}
+  //onChange: async (event) => {..}
+  //ref: (ref) => {..}  --> react-hook-form uses reference objects to get value from input fields
+  const Form = () => {
+    const {register, handleSubmit}  = useForm();
+
+    const onSubmit = (data:FieldValues) => console.log(data); // data : {name:John, age: 18}
+
+    return(
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <input 
+          {...register('name')}
+          id="name" 
+          type="text" 
+          className= "form-control" 
+        />
+        <input 
+          {...register('age')}
+          id="age" 
+          type="number" 
+          className= "form-control" 
+        />
+      </form>
+    )
+  }
+
+```
+
+Applying Validation
+```javascript
+  interface FormData {
+    name:string;
+    age: number;
+  }
+
+  const {register, handleSubmit, formState: {errors}}  = useForm<FormData>();
+  //with the useForm<FormData> --> type annotation we can get autocompletion and ensure typesafety
+  //here errors.name?.type
+  console.log(formState);
+
+  <input 
+    {...register('name', {required: true, minLength: 3, maxLength:10})}
+    id="name" 
+    type="text" 
+    className= "form-control" 
+  />
+  {errors.name?.type==='required' && <p className="text-danger">The name field is required</p>}
+  //if we don't have a name property and we try to access type property,
+  //it will show error, ? --> means it can be null
+  //errors.name?.type --> this expression is evaluated only if errors has a name property
+  
+  //another error message if the name is too short
+  {errors.name?.type==='minLength' && <p className="text-danger"> The name must be at least 3 characters </p>}
+
+```
+
+Schema based validation with zod
+```javascript
+  //npm i zod   --> website zod.dev
+  //npm i @hookform/resolvers@2.9.11
+  import {z} from 'zod';
+  import { zodResolver } from '@hookform/resolvers/zod';
+
+  //we can define the shape or schema of our form
+  const schema = z.object({
+    name: z.string().min(3, { message : 'Name must be at least 3 characters'}), // by chaining methods rule we can define one or more validations
+    age: z.number({invalid_type_error: 'Age field is required'}).min(18, { message : 'Age must be at least 18'})
+  })
+
+  type FormData = z.infer<typeof schema>; // this returns a typescript type which is similar to an interface 
+  // so using (type) we can define the shape of an object --> similar to an interface
+
+  const {register, handleSubmit, formState: {errors}}  = useForm<FormData>({resolver: zodResolver(schema) });
+
+  <input 
+    {...register('name')}
+    id="name" 
+    type="text" 
+    className= "form-control" 
+  />
+  {errors.name && <p className="text-danger">{errors.name.message}</p>}
+
+  <input 
+    {...register('age', {valueAsNumber: true})}
+    id="age" 
+    type="number" 
+    className= "form-control" 
+  />
+  {errors.age && <p className="text-danger">{errors.age.message}</p>}
+
+```
+
+Disabling the submit button
+```javascript
+  const {register, handleSubmit, formState: {errors, isValid}}  = useForm<FormData>({resolver: zodResolver(schema) });
+
+  <button disabled={!isValid} className="btn btn-primary" type="submit">Submit</button>
+
+```
+
+Project Expense Tracker
+1-Building Expense List
+```javascript
+  //ExpenseList.tsx
+
+  interface Expense {
+    id: number;
+    description: string;
+    amount: number;
+    category: string; 
+  }
+
+  interface Props {
+    expenses: Expense[]
+    onDelete: (id: number) => void;
+  }
+
+  const ExpenseList = ({expenses, onDelete }: Props) => {
+    if(expenses.length === 0) return null;
+
+    return (
+      <table className="table table-bordered">
+        <thead>
+          <tr>
+            <th>Description</th>
+            <th>Amount</th>
+            <th>Category</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {expenses.map(expense => <tr key={expense.id}>
+            <td>{expense.description}</td>
+            <td>{expense.amount}</td>
+            <td>{expense.category}</td>
+            <td>
+              <button 
+                className="btn btn-outline-danger" 
+                onClick={() => onDelete(expense.id)}
+              >
+                Delete
+              </button>
+            </td>
+          </tr>)}
+        </tbody>
+        <tfoot>
+          <td>Total</td>
+          <td>${expenses.reduce((acc, expense) => expense.amount + acc).toFixed(2)}</td>
+          {// acc --> accumaletor is just a number that holds the value
+            //so the reduce method iterates over the expense array and each iteration
+            // it runs the arrow function and takes expense.amount and adds it to the acc
+            // second argument --> pass the intial value of the accumaletor
+            //toFixed --> Number of digits after the decimal point
+          }
+          <td></td>
+          <td></td>
+        </tfoot>
+      </table>
+    )
+  }
+  export default ExpenseList
+
+  function App() {
+    const [expenses, setExpense] = useState=([
+      {id:1, description:'milk', category:'Grocery', amount:10}
+      {id:2, description:'bbb', category:'Grocery', amount:10}
+      {id:3, description:'ccc', category:'Grocery', amount:10}
+    ])
+
+    return (
+      <div>
+        <ExpenseList 
+          expenses={expenses} 
+          onDelete={(id) => setExpenses(expenses.filter(e => e.id !== id))}
+        />
+      </div>
+    )
+  }
+
+```
+
+2-Building Expense Filter
+```javascript
+  //ExpenseFilter.tsx
+
+  interface Props{
+    onSelectCategory: (category: string) => void;
+  }
+
+  const ExpenseFilter = ({onSelectCategory}: Props) => {
+    return(
+      <select className='form-select' onChange={(event) => onSelectCategory(event.target.value)}>
+        <option value=''>All categories</option>
+        <option value='Groceries'>Groceries</option>
+        <option value='Utilities'>Utilities</option>
+        <option value='Entertainment'>Entertainment</option>
+      </select>
+    )
+  }
+
+  function App() {
+    const [selectedCategory, setSelectedCategory] = useState('');
+    const [expenses, setExpense] = useState=([
+      {id:1, description:'milk', category:'Grocery', amount:10}
+      {id:2, description:'bbb', category:'Grocery', amount:10}
+      {id:3, description:'ccc', category:'Grocery', amount:10}
+    ])
+
+    const visibleExpenses = selectedCategory 
+      ? expense.filter(e => e.category === selectedCategory) 
+      : expenses
+
+    return (
+      <div>
+        <div className='mb-3'>
+          <ExpenseFilter onSelectCategory = {category => setSelectedCategory(category)}>
+        </div>
+        <ExpenseList 
+          expenses={visibleExpenses} 
+          onDelete={(id) => setExpenses(expenses.filter(e => e.id !== id))}
+        />
+      </div>
+    )
+  }
+
+```
+
+3-Building the Expense Form
+```javascript
+  //ExpenseForm.tsx
+  
+  const ExpenseForm = () => {
+    return (
+      <form>
+        <div className="mb-3">
+          <label htmlFor= 'description' className='form-label'>Description</label>
+          <input id='description' type='text' className='form-control'/>
+        </div>
+        <div className="mb-3">
+          <label htmlFor= 'amount' className='form-label'>Amount</label>
+          <input id='amount' type='number' className='form-control'/>
+        </div>
+        <div className="mb-3">
+          <label htmlFor= 'category' className='form-label'>Category</label>
+          <select id='category' type='text' className='form-select'/>
+            <option vlaue=''></option>
+            {categories.map(category => <option key={category} value={category}>{category}</option>)}
+          </select>
+        </div>
+        <button disabled={!isValid} className="btn btn-primary" type="submit">Submit</button>
+      </form>
+    )
+  }
+
+  //Categories.tsx
+  export const categories = ['Groceries', 'Utilities', 'Entertainment']
+
+  //ExpenseFilter.tsx
+  interface Props{
+    onSelectCategory: (category: string) => void;
+  }
+  const ExpenseFilter = ({onSelectCategory}: Props) => {
+    return(
+      <select className='form-select' onChange={(event) => onSelectCategory(event.target.value)}>
+        <option value=''>All categories</option>
+          {categories.map(category => <option key={category} value={category}>{category}</option>)}
+      </select>
+    )
+  }
+
+  function App() {
+    //...... from top
+    return (
+      <div>
+        <div className='mb-5'>
+          <ExpenseForm />
+        </div>
+        <div className='mb-3'>
+          <ExpenseFilter onSelectCategory = {category => setSelectedCategory(category)}>
+        </div>
+        <ExpenseList 
+          expenses={visibleExpenses} 
+          onDelete={(id) => setExpenses(expenses.filter(e => e.id !== id))}
+        />
+      </div>
+    )
+  }
+
+```
+
+Integrating with React Hook Form and Zod
+```javascript
+  import {z} from 'zod';
+  import {useForm} from 'react-hook-form';
+  import {zodResolver} from '@hookform/resolvers/zod';
+
+  const schema = z.object({
+    description: z.string().min(3).max(50),
+    amount: z.number().min(1).max(100_000),
+    category: z.enum(categories, {
+      errorMap: () => ({message: 'Category is required'})
+    })
+    //an enum can be one of many values
+  })
+
+  /*const schema = z.object({
+    name: z.string().min(3, { message : 'Name must be at least 3 characters'}), // by chaining methods rule we can define one or more validations
+    age: z.number({invalid_type_error: 'Age field is required'}).min(18, { message : 'Age must be at least 18'})
+  })*/
+
+  type ExpenseFormData = z.infer<typeof schema>;
+
+  const ExpenseForm = () => {
+
+    const {register, handleSubmit, formState:{errors}} = useForm<ExpenseFormData>({resolver: zodResolver(schema)});
+
+    return (
+      <form onSubmit={handleSubmit(data => console.log(data))}>
+        <div className="mb-3">
+          <label htmlFor= 'description' className='form-label'>Description</label>
+          <input {...register('description')} id='description' type='text' className='form-control'/>
+          {errors.description && <p className='text-danger'>{errors.description.message}</p>}
+        </div>
+        <div className="mb-3">
+          <label htmlFor= 'amount' className='form-label'>Amount</label>
+          <input {...register('amount')} id='amount' type='number' className='form-control'/>
+          {errors.amount && <p className='text-danger'>{errors.amount.message}</p>}
+        </div>
+        <div className="mb-3">
+          <label htmlFor= 'category' className='form-label'>Category</label>
+          <select {...register('category')} id='category' type='text' className='form-select'/>
+            <option vlaue=''></option>
+            {categories.map(category => <option key={category} value={category}>{category}</option>)}
+          </select>
+          {errors.category && <p className='text-danger'>{errors.category.message}</p>}
+        </div>
+        <button disabled={!isValid} className="btn btn-primary" type="submit">Submit</button>
+      </form>
+    )
+  }
+
+  const categories = ['Groceries', 'Utilities', 'Entertainment'] as const;
+
+```
+
+Adding an Expense
+```javascript
+  interface Props {
+    onSubmit: (data: ExpenseFormData) => void;
+  } 
+  const {
+    register, 
+    handleSubmit, 
+    reset,
+    formState:{errors}
+  } = useForm<ExpenseFormData>({resolver: zodResolver(schema)});
+
+  const ExpenseForm = ({onSubmit} : Props) => {
+    <form onSubmit={handleSubmit(data => {
+      onSubmit(data);
+      reset();
+    })}>
+    </form>
+  }
+
+  function App() {
+    //...... from top
+    return (
+      <div>
+        <div className='mb-5'>
+          <ExpenseForm onSubmit = {expense => setExpense([...expenses, {...expense, id: expenses.length+1}])} />
+        </div>
+        <div className='mb-3'>
+          <ExpenseFilter onSelectCategory = {category => setSelectedCategory(category)}>
+        </div>
+        <ExpenseList 
+          expenses={visibleExpenses} 
+          onDelete={(id) => setExpenses(expenses.filter(e => e.id !== id))}
+        />
+      </div>
+    )
+  }
+
+
+```
