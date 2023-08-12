@@ -1159,3 +1159,79 @@ Adding an Expense
 
 
 ```
+
+Understanding the Effect Hook
+```javascript
+  // useEffect ( () => {})
+  // To execute a piece of code after a component is rendered
+  import {useRef} from 'react';
+
+  function App() {
+    const ref = useRef<HTMLInputElement>(null);
+
+    //Side effect --> it is changing something outside of the component
+    // it is a impure component, to make this pure we need to use Effect Hook
+    if(ref.current) ref.current.focus(); //changing the state of dom
+
+    useEffect( () => {
+        //Side Effect --> any piece of code that causes side effects
+        // just like other hooks call this at the top level of your componenet
+        //can be called multiple times for different purposes
+        if(ref.current) ref.current.focus();
+      }
+    )
+    useEffect (() => {
+        document.title = 'My App';
+    })
+    // when multiple effect hooks are there , React will execute them after each render
+    // in order in which they are written
+
+    return (
+      <div>
+        <input ref= {ref} type="text" className="form-control"> 
+      </div>
+    )
+  }
+
+```
+
+Effect Dependencies
+```javascript
+  const ProductList = ( {category}: {category:string} ) => {
+    const [products, setProducts] = useState([]);
+
+    // after render effect
+    useEffect(() => {
+      console.log('Fetching products in ', category);
+      setProducts(['Clothing', 'Household'])
+    }, [category]); // it will re run useEffect if the value of category changes
+    // once the state changes , react will re render and useEffect will trigger 
+    // causing the state to change again , and effect hook will run again and so on.. causing an infite loop
+    // if we don't supply [category] or [] it will run in an infine loop 
+    // [] to run this effect only once when the component is first rendered
+    //[category] run only when value of category changes
+
+    return (
+      <div>ProductList</div>
+    )
+  } 
+  
+  function App() {
+    const [category, setCategory] = useState('');
+
+    return(
+      <div>
+        <select 
+          className='form-select'
+          onChange= { (event) => setCategory(event.target.value)}
+        >
+          <option value=""></option>
+          <option value="Clothing">Clothing</option>
+          <option value="Household">Household</option>
+        </select>
+        <ProductList category = {category} />
+      </div>
+    )
+  }
+
+```
