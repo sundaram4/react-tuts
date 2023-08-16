@@ -1207,7 +1207,7 @@ Effect Dependencies
     }, [category]); // it will re run useEffect if the value of category changes
     // once the state changes , react will re render and useEffect will trigger 
     // causing the state to change again , and effect hook will run again and so on.. causing an infite loop
-    // if we don't supply [category] or [] it will run in an infine loop 
+    // if we don't supply [category] or [] it will run in an infinite loop 
     // [] to run this effect only once when the component is first rendered
     //[category] run only when value of category changes
 
@@ -1235,3 +1235,149 @@ Effect Dependencies
   }
 
 ```
+
+Effect Clean Up
+```javascript
+  const connect = () => console.log('Connecting');
+  const disConnect = () => console.log('Disonnecting');
+
+  function App() {
+    useEffect(() => {
+      
+      connect(); //if we are showing a model our cleanup function should hide the model
+      //if we are fetching data through api, in cleanup we should abort it
+
+      //to provide a clean up code we return a function
+      return () => disconnect(); // if we need to do cleanup this is how we do it
+    });
+
+    return <div></div>
+  }
+
+```
+
+Fetching Data
+```javascript
+  // npm i axios
+  import axios from 'axios';
+
+  interface User {
+    id: number;
+    name: string; // only define the properties that we are going to use
+  }
+
+  function App() {
+    const [users, setUsers] = useState<User[]>([]);
+
+    useEffect( () => {
+      // the calling of server is not going to happen immediately
+      //Perhaps it will take atleast half a second
+      axios.get<User[]>('https://jsonplaceholder.typicode.com/users') // this method will return a promise
+        //Promise: An object that holds the eventual result or failure of an asynchronous operation
+        //asynchronous --> fancy term for an operation that might take long time
+        //get<User[]> --> specify the type of data we are going to fetch
+        .then(res => setUsers(res.data));
+    }, []) //pass an empty array as a dependency to this effect
+
+    return <ul>
+      {users.map(user => <li key={user.id}>{user.name}</li>)}
+    </ul>
+  }
+
+```
+Understanding HTTP Requests
+```javascript
+  // when we call the get method, an http request to the server is made
+  //Hypertext Transfer Protocol --> A protocol for transfering data over the Internet
+  // client(browser) -->(http request) server
+  // server -->(http response object)  client
+  //in http every request and every response has 2 sections
+  // 1- Header --> we specify metadata
+  // 2- Body --> we supply or get the data 
+```
+
+Handling Errors
+```javascript
+  // while calling the server many things can go wrong
+  // in javascript all promise have method called catch
+  // that we can use for catching errors
+
+  const [error, setError] = useState('');
+
+  useEffect( () => {
+    // get -> promise -> res/err
+    axios
+      .get<User[]>('https://jsonplaceholder.typicode.com/users') 
+      .then(res => setUsers(res.data))
+      .catch(err => setError(err.message));
+  }, [])
+
+```
+
+Working with Async and Await
+```javascript
+  import {AxiosError} from 'axios';
+
+  useEffect( () => {
+    // a new func with async keyword defined inside the arrow function
+    const fetchUsers = async () => {
+      try{
+        const res = await axios
+          .get<User[]>('https://jsonplaceholder.typicode.com/users') 
+        setUsers(res.data);
+      }
+      catch (err) {
+        setError((err as AxiosError).message);
+      }
+    }
+    fetchUsers();
+    
+  }, [])
+
+```
+
+Cancelling a Fetch Request
+```javascript
+  // sometime we need to return a cleanup function from our effect
+  useEffect( () => {
+    const controller = new AbortController();// built in class in modern browser
+    // allows us to abort a aynchronous operation like fetch request, dom manipulation ans so on
+    axios
+      .get<User[]>('https://jsonplaceholder.typicode.com/users', {signal:controller.signal}) 
+      .then(res => setUsers(res.data))
+      .catch(err => {
+        if(err instanceof CanceledError) return;
+        setError(err.message)
+      )};
+        
+    
+    return () => controller.abort();
+  }, [])
+
+```
+
+Showing a Loading Indicator
+```javascript
+  //showing a loading indicator while fetching the data
+  const [isLoading, setLoading] = useState(false);
+
+  setLoading(true);
+  axios
+    .get<User[]>('https://jsonplaceholder.typicode.com/users', {signal:controller.signal}) 
+    .then(res => {
+      setUsers(res.data);
+      setLoading(false);
+    })
+    .catch(err => {
+      if(err instanceof CanceledError) return;
+      setError(err.message)
+      setLoading(false);
+    )};
+
+
+  return (
+    {isLoading && <div className='spinner-border'></div>}
+  )
+
+```
+
