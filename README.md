@@ -1381,3 +1381,58 @@ Showing a Loading Indicator
 
 ```
 
+Deleting Data
+```javascript
+  const deleteUser = (user:User) => {
+    const originalUsers = [...users];
+    setUsers(users.filter(u => u.id !== user.id));
+    
+    axios.delete('https://jsonplaceholder.typicode.com/users' + user.id)
+      .catch(err => {
+        setError(err.message);
+        setUsers(originalUsers);
+      }) 
+
+  }
+
+```
+
+Creating Data
+```javascript
+  const addUser = () => {
+    const originalUsers = [...users]
+    const newUser = {id: 0, name: 'Kunal' };
+    setUsers([...users, newUser]); 
+
+    axios.post('https://jsonplaceholder.typicode.com/users', newUser)
+      .then(res => setUsers([res.data, ...users])); 
+      // or it can be written as
+      .then(({data: savedUser}) => setUsers([savedUser, ...users])); 
+      .catch(err => {
+        setError(err.message);
+        setUsers(originalUsers);
+      }) 
+  }
+
+  <button className = 'btn btn-primary' onClick={addUser}>Add</button>
+
+```
+
+Updating Data
+```javascript
+  const updateUser = (user:User) => {
+    const originalUsers = [...users];
+    const updatedUser = {...user, name: user.name + '!'};
+    setUsers(users.map(u => u.id === user.id ? updatedUser : user))
+
+    axios.patch('https://jsonplaceholder.typicode.com/users' + user.id, updatedUser)
+      .catch(err => {
+        setError(err.message);
+        setUsers(originalUsers);
+      })
+  }
+  
+  <button className = 'btn btn-outline-secondary' onClick={() => updateUser(user)}>Update</button>
+
+```
+
